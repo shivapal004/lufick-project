@@ -1,6 +1,7 @@
 import 'package:authentication_app/auth/user_provider.dart';
 import 'package:authentication_app/screens/home_screen.dart';
 import 'package:authentication_app/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,11 +28,22 @@ class MyApp extends StatelessWidget {
               backgroundColor: Colors.orange,
               titleTextStyle: TextStyle(fontSize: 22, color: Colors.black)),
         ),
-        home: Consumer<UserProvider>(
-          builder: (context, userProvider, child) {
-            return userProvider.user != null
-                ? const HomeScreen()
-                : const LoginScreen();
+        // home: Consumer<UserProvider>(
+        //   builder: (context, userProvider, child) {
+        //     return userProvider.user != null
+        //         ? const HomeScreen()
+        //         : const LoginScreen();
+        //   },
+        // ),
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+            return snapshot.hasData ? const HomeScreen() : const LoginScreen();
           },
         ),
       ),
