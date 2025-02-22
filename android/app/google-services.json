@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "775061915012",
+    "project_id": "lufick-project",
+    "storage_bucket": "lufick-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775061915012:android:be7230464d64425341c9d1",
+        "android_client_info": {
+          "package_name": "com.example.authentication_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxy_NTLunkKWbwmZjNQREAzPKJiBzzO9M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
