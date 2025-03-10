@@ -9,17 +9,22 @@ class UserProvider extends ChangeNotifier {
   User? get user => _user;
 
   UserProvider() {
-    _user = FirebaseAuth.instance.currentUser; 
+    _user = FirebaseAuth.instance.currentUser;
   }
 
   Future<void> signIn() async {
     _user = await _authService.signInWithGoogle();
-    notifyListeners();  
+    notifyListeners();
   }
 
   Future<void> signOut() async {
     await _authService.signOut();
     _user = null;
     notifyListeners();
+  }
+
+  void setUser(User? updatedUser) {
+    _user = updatedUser;
+    notifyListeners(); // Notify UI to update profile picture
   }
 }

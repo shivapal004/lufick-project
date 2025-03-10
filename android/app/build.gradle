@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.authentication_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     // ndkVersion = flutter.ndkVersion
     ndkVersion = "25.1.8937393"
 

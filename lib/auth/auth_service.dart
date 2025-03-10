@@ -11,14 +11,14 @@ class AuthService {
       if (googleUser == null) return null;
 
       final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
       UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      await _auth.signInWithCredential(credential);
       return userCredential.user;
     } catch (e) {
       print("Error during Google Sign-In: $e");

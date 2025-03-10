@@ -1,3 +1,5 @@
+import 'package:authentication_app/screens/form_screen.dart';
+import 'package:authentication_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../auth/user_provider.dart';
@@ -12,31 +14,60 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome ${user?.displayName ?? ''}'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              userProvider.signOut();
+        title: const Text('Home Screen'),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
             },
-          )
-        ],
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(user?.photoURL ?? ''),
+            ),
+          ),
+        ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(user?.photoURL ?? ''),
-              radius: 40,
-            ),
-            const SizedBox(height: 10),
-            Text(user?.displayName ?? 'No Name',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text(user?.email ?? 'No Email',
-                style: const TextStyle(fontSize: 16, color: Colors.grey)),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Let's Get to Know You Better! 😊",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FormScreen()),
+                  );
+                },
+                child: const Text(
+                  "Fill Your Details",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

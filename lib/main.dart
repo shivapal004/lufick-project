@@ -28,13 +28,6 @@ class MyApp extends StatelessWidget {
               backgroundColor: Colors.orange,
               titleTextStyle: TextStyle(fontSize: 22, color: Colors.black)),
         ),
-        // home: Consumer<UserProvider>(
-        //   builder: (context, userProvider, child) {
-        //     return userProvider.user != null
-        //         ? const HomeScreen()
-        //         : const LoginScreen();
-        //   },
-        // ),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
