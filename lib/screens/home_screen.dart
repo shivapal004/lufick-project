@@ -1,8 +1,12 @@
+import 'package:authentication_app/models/data_model.dart';
 import 'package:authentication_app/screens/form_screen.dart';
 import 'package:authentication_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../auth/user_provider.dart';
+import '../providers/user_provider.dart';
+import '../services/firestore_services.dart';
+import 'detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,6 +15,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final user = userProvider.user;
+    final FirestoreServices firestoreServices = FirestoreServices();
 
     return Scaffold(
       appBar: AppBar(
@@ -30,45 +35,42 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Let's Get to Know You Better! 😊",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const FormScreen()),
+      body: StreamBuilder<List<DataModel>>(
+          stream: firestoreServices.getData(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(child: Text('Error occurred '));
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            List<DataModel> dataList = snapshot.data!;
+            return ListView.builder(
+                itemCount: dataList.length,
+                itemBuilder: (context, index) {
+                  final data = dataList[index];
+                  return ListTile(
+                    title: Text(data.title),
+                    subtitle: Text(data.category),
+                    trailing: Text(DateFormat.yMMMd().format(data.date)),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailScreen(data: data),
+                        ),
+                      );
+                    },
+                    // trailing: Text(DateFormat.yMMMd().format(data.date)),
                   );
-                },
-                child: const Text(
-                  "Fill Your Details",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
+                });
+          }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => const FormScreen()));
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

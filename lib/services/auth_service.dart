@@ -22,8 +22,8 @@ class AuthService {
       return userCredential.user;
     } catch (e) {
       print("Error during Google Sign-In: $e");
-      return null;
     }
+    return null;
   }
 
   Future<void> signOut() async {

@@ -1,4 +1,4 @@
-import 'package:authentication_app/auth/user_provider.dart';
+import 'package:authentication_app/providers/user_provider.dart';
 import 'package:authentication_app/screens/home_screen.dart';
 import 'package:authentication_app/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';

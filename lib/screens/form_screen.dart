@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:authentication_app/services/firestore_services.dart';
 import 'package:flutter/material.dart';
+
+import '../models/data_model.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -11,78 +12,34 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  String? _gender;
-  String? _profession;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
 
-  final List<String> _professions = [
-    "Student",
-    "Software Engineer",
-    "Doctor",
-    "Teacher",
-    "Other"
-  ];
+  final FirestoreServices _firestoreServices = FirestoreServices();
 
-  Future<void> _selectDate() async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        _dobController.text =
-            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-      });
-    }
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _categoryController.dispose();
+    super.dispose();
   }
 
-  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  void _addData() {
+    if (_titleController.text.isNotEmpty &&
+        _descriptionController.text.isNotEmpty &&
+        _categoryController.text.isNotEmpty) {
+      DataModel newData = DataModel(
+        id: '',
+        title: _titleController.text,
+        description: _descriptionController.text,
+        date: DateTime.now(),
+        category: _categoryController.text,
+      );
 
-  Future<void> saveUserData() async {
-    if (_formKey.currentState!.validate()) {
-      final User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("User not logged in")),
-        );
-        return;
-      }
-      try {
-        await firebaseFirestore.collection("users").doc(user.uid).set({
-          "uid": user.uid,
-          "name": _nameController.text,
-          "phone": _phoneController.text,
-          "email": user.email,
-          "dob": _dobController.text,
-          "gender": _gender ?? "Not specified",
-          "profession": _profession ?? "Not specified",
-          "address": _addressController.text,
-          "photoUrl": user.photoURL,
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Data saved successfully!")),
-        );
-
-        setState(() {
-          _nameController.clear();
-          _phoneController.clear();
-          _dobController.clear();
-          _addressController.clear();
-          _gender = null;
-          _profession = null;
-        });
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e")),
-        );
-      }
+      _firestoreServices.addData(newData);
+      Navigator.pop(context);
     }
   }
 
@@ -90,7 +47,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("User Form"),
+        title: const Text("Form Screen"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
@@ -99,29 +56,25 @@ class _FormScreenState extends State<FormScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                //name
                 TextFormField(
-                  controller: _nameController,
+                  controller: _titleController,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    hintText: "Enter your name",
+                    hintText: "Title",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 16),
                   ),
-                  validator: (value) =>
-                      value!.isEmpty ? "Enter your name" : null,
+                  validator: (value) => value!.isEmpty ? "Enter title" : null,
                 ),
                 const SizedBox(height: 10),
-
-                //phone
                 TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
+                  controller: _descriptionController,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    labelText: "Enter phone no.",
+                    labelText: "Enter description",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -129,17 +82,13 @@ class _FormScreenState extends State<FormScreen> {
                         horizontal: 15, vertical: 16),
                   ),
                   validator: (value) =>
-                      value!.isEmpty ? "Enter your phone number" : null,
+                      value!.isEmpty ? "Enter description" : null,
                 ),
                 const SizedBox(height: 10),
-
-                //dob
                 TextFormField(
-                  controller: _dobController,
-                  readOnly: true,
-                  onTap: _selectDate,
+                  controller: _categoryController,
                   decoration: InputDecoration(
-                    labelText: "Enter date of birth",
+                    labelText: "Enter category",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -147,94 +96,16 @@ class _FormScreenState extends State<FormScreen> {
                         horizontal: 15, vertical: 16),
                   ),
                   validator: (value) =>
-                      value!.isEmpty ? "Enter your date of birth" : null,
+                      value!.isEmpty ? "Enter category" : null,
                 ),
                 const SizedBox(height: 10),
-
-                //gender
-                const Text("Select Gender", style: TextStyle(fontSize: 16)),
-                Row(
-                  children: [
-                    Radio(
-                      value: "Male",
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value.toString();
-                        });
-                      },
-                    ),
-                    const Text("Male"),
-                    Radio(
-                      value: "Female",
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value.toString();
-                        });
-                      },
-                    ),
-                    const Text("Female"),
-                    Radio(
-                      value: "Other",
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value.toString();
-                        });
-                      },
-                    ),
-                    const Text("Other"),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                //profession
-                DropdownButtonFormField<String>(
-                  value: _profession,
-                  decoration: InputDecoration(
-                    labelText: "Select profession",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 16),
-                  ),
-                  items: _professions.map((String profession) {
-                    return DropdownMenuItem<String>(
-                      value: profession,
-                      child: Text(profession),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _profession = value!;
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? "Profession is required" : null,
-                ),
-                const SizedBox(height: 12),
-
-                //address
-                TextFormField(
-                  controller: _addressController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    labelText: "Enter your address",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 16),
-                  ),
-                  validator: (value) =>
-                      value!.isEmpty ? "Address is required" : null,
-                ),
-                const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
-                    onPressed: saveUserData,
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _addData();
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30, vertical: 12),
@@ -244,7 +115,7 @@ class _FormScreenState extends State<FormScreen> {
                       ),
                     ),
                     child: const Text(
-                      "Submit",
+                      "Add data",
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
