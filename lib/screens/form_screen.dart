@@ -1,5 +1,6 @@
-import 'package:authentication_app/services/firestore_services.dart';
+import 'package:authentication_app/providers/data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/data_model.dart';
 
@@ -15,8 +16,6 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
-
-  final FirestoreServices _firestoreServices = FirestoreServices();
 
   @override
   void dispose() {
@@ -38,7 +37,7 @@ class _FormScreenState extends State<FormScreen> {
         category: _categoryController.text,
       );
 
-      _firestoreServices.addData(newData);
+      Provider.of<DataProvider>(context, listen: false).addData(newData);
       Navigator.pop(context);
     }
   }
