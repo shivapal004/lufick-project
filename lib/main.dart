@@ -1,3 +1,4 @@
+import 'package:authentication_app/providers/data_provider.dart';
 import 'package:authentication_app/providers/user_provider.dart';
 import 'package:authentication_app/screens/home_screen.dart';
 import 'package:authentication_app/screens/login_screen.dart';
@@ -17,29 +18,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Authentication App',
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-              centerTitle: true,
-              backgroundColor: Colors.orange,
-              titleTextStyle: TextStyle(fontSize: 22, color: Colors.black)),
+    return
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (context) => UserProvider()),
+          ChangeNotifierProvider(
+              create: (context) => DataProvider()..fetchData()),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Authentication App',
+          theme: ThemeData(
+            appBarTheme: const AppBarTheme(
+                centerTitle: true,
+                backgroundColor: Colors.orange,
+                titleTextStyle: TextStyle(fontSize: 22, color: Colors.black)),
+          ),
+          home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+              return snapshot.hasData
+                  ? const HomeScreen()
+                  : const LoginScreen();
+            },
+          ),
         ),
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              );
-            }
-            return snapshot.hasData ? const HomeScreen() : const LoginScreen();
-          },
-        ),
-      ),
-    );
+      );
+
+
   }
 }

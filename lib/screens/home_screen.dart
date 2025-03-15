@@ -1,21 +1,30 @@
-import 'package:authentication_app/models/data_model.dart';
 import 'package:authentication_app/screens/form_screen.dart';
 import 'package:authentication_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../providers/data_provider.dart';
 import '../providers/user_provider.dart';
-import '../services/firestore_services.dart';
 import 'detail_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<DataProvider>(context, listen: false).fetchData();
+  }
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final dataProvider = Provider.of<DataProvider>(context);
     final user = userProvider.user;
-    final FirestoreServices firestoreServices = FirestoreServices();
 
     return Scaffold(
       appBar: AppBar(
@@ -35,43 +44,35 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: StreamBuilder<List<DataModel>>(
-          stream: firestoreServices.getData(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Center(child: Text('Error occurred '));
-            }
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            List<DataModel> dataList = snapshot.data!;
-            return ListView.builder(
-                itemCount: dataList.length,
-                itemBuilder: (context, index) {
-                  final data = dataList[index];
-                  return ListTile(
-                    title: Text(data.title),
-                    subtitle: Text(data.category),
-                    trailing: Text(DateFormat.yMMMd().format(data.date)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailScreen(data: data),
-                        ),
-                      );
-                    },
-                    // trailing: Text(DateFormat.yMMMd().format(data.date)),
-                  );
-                });
+      body: ListView.builder(
+          itemCount: dataProvider.dataList.length,
+          itemBuilder: (context, index) {
+            final data = dataProvider.dataList[index];
+            return ListTile(
+              title: Text(data.title),
+              subtitle: Text(data.category),
+              // trailing: Text(DateFormat.yMMMd().format(data.date)),
+              onTap: () {
+                dataProvider.setSelectedItem(data);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DetailScreen(),
+                  ),
+                );
+              },
+              trailing: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () => dataProvider.deleteData(data.id),
+              ),
+            );
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (_) => const FormScreen()));
-        },
-        child: const Icon(Icons.add),
-      ),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => const FormScreen()));
+          },
+          child: const Icon(Icons.add)),
     );
   }
 }
