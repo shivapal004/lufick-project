@@ -1,9 +1,12 @@
 import 'package:authentication_app/models/data_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class DataProvider with ChangeNotifier {
   final FirebaseFirestore db = FirebaseFirestore.instance;
+  final User? _user = FirebaseAuth.instance.currentUser;
+
   List<DataModel> _dataList = [];
   DataModel? _selectedItem;
 
@@ -11,26 +14,24 @@ class DataProvider with ChangeNotifier {
 
   DataModel? get selectedItem => _selectedItem;
 
-  void fetchData() {
-    db.collection('data').snapshots().listen((snapshot) {
-      _dataList = snapshot.docs
-          .map((doc) => DataModel.fromMap(doc.data(), doc.id))
-          .toList();
+  void fetchData()  async{
+    if(_user == null) return;
+
+    db.collection('users').doc(_user.uid).collection('data').snapshots().listen((snapshot) {
+      _dataList = snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data();
+        data['id'] = doc.id;
+        return DataModel.fromMap(data);
+      }).toList();
       notifyListeners();
     });
   }
 
   Future<void> addData(DataModel data) async {
-    await db.collection('data').doc().set(data.toMap());
-    fetchData();
-  }
+    if(_user == null) return;
+    await db.collection('users').doc(_user.uid).collection('data').add(data.toMap());
 
-  Stream<List<DataModel>> getData() {
-    return db.collection('data').snapshots().map((snapshot) {
-      return snapshot.docs
-          .map((doc) => DataModel.fromMap(doc.data(), doc.id))
-          .toList();
-    });
+    notifyListeners();
   }
 
   void setSelectedItem(DataModel item) {
@@ -38,24 +39,27 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateData(
-      String id, String newTitle, String newDescription, String newCategory) {
+  Future<void> updateData(String id, Map<String, dynamic> updatedData) async {
+    if(_user == null) return;
+    await db.collection('users').doc(_user.uid).collection('data').doc(id).update(updatedData);
+
     int index = _dataList.indexWhere((item) => item.id == id);
     if (index != -1) {
-      _dataList[index] = DataModel(
+      dataList[index] = DataModel(
         id: id,
-        title: newTitle,
-        description: newDescription,
-        category: newCategory,
-        date: DateTime.now(),
+        title: updatedData['title'] ?? _dataList[index].title,
+        description: updatedData['description'] ?? _dataList[index].description,
+        category: updatedData['category'] ?? _dataList[index].category,
+        date: DateTime.now(), // Update with new timestamp
       );
-      _selectedItem = _dataList[index];
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   Future<void> deleteData(String id) async {
-    await db.collection('data').doc(id).delete();
-    fetchData();
+    if(_user == null) return;
+    await db.collection('users').doc(_user.uid).collection('data').doc(id).delete();
+    dataList.removeWhere((item) => item.id == id);
+    notifyListeners();
   }
 }
