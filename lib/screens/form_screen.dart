@@ -1,4 +1,5 @@
 import 'package:authentication_app/providers/data_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   void dispose() {
@@ -30,7 +32,7 @@ class _FormScreenState extends State<FormScreen> {
         _descriptionController.text.isNotEmpty &&
         _categoryController.text.isNotEmpty) {
       DataModel newData = DataModel(
-        id: '',
+        id: _user!.uid,
         title: _titleController.text,
         description: _descriptionController.text,
         date: DateTime.now(),
