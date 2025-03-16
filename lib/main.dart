@@ -1,5 +1,6 @@
 import 'package:authentication_app/providers/data_provider.dart';
 import 'package:authentication_app/providers/user_provider.dart';
+import 'package:authentication_app/screens/form_screen.dart';
 import 'package:authentication_app/screens/home_screen.dart';
 import 'package:authentication_app/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
               create: (context) => UserProvider()),
           ChangeNotifierProvider(
-              create: (context) => DataProvider()..fetchData()),
+              create: (context) => DataProvider()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
