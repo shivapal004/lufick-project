@@ -20,6 +20,7 @@ class AuthService {
       UserCredential userCredential =
       await _auth.signInWithCredential(credential);
       return userCredential.user;
+
     } catch (e) {
       print("Error during Google Sign-In: $e");
     }
@@ -30,4 +31,6 @@ class AuthService {
     await _googleSignIn.signOut();
     await _auth.signOut();
   }
+
+  User? get currentUser => _auth.currentUser;
 }
