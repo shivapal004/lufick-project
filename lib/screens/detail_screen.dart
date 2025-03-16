@@ -9,37 +9,52 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dataProvider = Provider.of<DataProvider>(context);
+    final dataProvider = Provider.of<DataProvider>(context, listen: false);
     final selectedItem = dataProvider.selectedItem;
+
+    if (selectedItem == null) {
+      return const Scaffold(
+        body: Center(child: Text("No item selected")),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Title: ${selectedItem!.title}',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('Description: ${selectedItem.description}',
-                  style: const TextStyle(fontSize: 16)),
-              Text('Category: ${selectedItem.category}',
-                  style: const TextStyle(fontSize: 16)),
-              Text('Date: ${DateFormat.yMMMd().format(selectedItem.date)}',
-                  style: const TextStyle(fontSize: 16)),
-              const SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    _showUpdateDialog(context, dataProvider, selectedItem);
-                  },
-                  child: const Text("Update"))
-            ],
-          ),
-        ),
+        child: Consumer<DataProvider>(builder: (context, dataProvider, child){
+          final selectedItem = dataProvider.selectedItem;
+
+          if (selectedItem == null) {
+            return const Center(child: Text("No item selected"));
+          }
+
+          return Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Title: ${selectedItem.title}',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('Description: ${selectedItem.description}',
+                    style: const TextStyle(fontSize: 16)),
+                Text('Category: ${selectedItem.category}',
+                    style: const TextStyle(fontSize: 16)),
+                Text('Date: ${DateFormat.yMMMd().format(selectedItem.date)}',
+                    style: const TextStyle(fontSize: 16)),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _showUpdateDialog(context, dataProvider, selectedItem);
+                    },
+                    child: const Text("Update"))
+              ],
+            ),
+          );
+
+        }),
       ),
     );
   }
@@ -82,8 +97,12 @@ class DetailScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                dataProvider.updateData(selectedItem.id, titleController.text,
-                    descriptionController.text, categoryController.text);
+                dataProvider.updateData(selectedItem.id, {
+                  'title': titleController.text,
+                  'description': descriptionController.text,
+                  'category' : categoryController.text,
+
+                });
                 Navigator.pop(context);
               },
               child: const Text("Update"),
