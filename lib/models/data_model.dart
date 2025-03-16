@@ -15,21 +15,26 @@ class DataModel {
     required this.category,
   });
 
-  factory DataModel.fromMap(Map<String, dynamic> map, String id) {
+  factory DataModel.fromMap(Map<String, dynamic> map) {
     return DataModel(
-        id: id,
-        title: map['title'] ?? "",
-        description: map['description'] ?? "",
-        date: (map['date'] as Timestamp).toDate(),
-        category: map['category'] ?? "");
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      category: map['category'] ?? '',
+      date: map['date'] is Timestamp
+          ? (map['date'] as Timestamp).toDate()
+          : DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
+    );
   }
+
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'title': title,
       'description': description,
       'date': Timestamp.fromDate(date),
-      'category': category
+      'category': category,
     };
   }
 }
