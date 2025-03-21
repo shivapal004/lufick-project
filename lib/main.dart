@@ -1,4 +1,7 @@
+import 'package:authentication_app/providers/course_provider.dart';
 import 'package:authentication_app/providers/data_provider.dart';
+import 'package:authentication_app/providers/enrollment_provider.dart';
+import 'package:authentication_app/providers/student_provider.dart';
 import 'package:authentication_app/providers/user_provider.dart';
 import 'package:authentication_app/screens/form_screen.dart';
 import 'package:authentication_app/screens/home_screen.dart';
@@ -26,6 +29,12 @@ class MyApp extends StatelessWidget {
               create: (context) => UserProvider()),
           ChangeNotifierProvider(
               create: (context) => DataProvider()),
+          ChangeNotifierProvider(
+              create: (context) => StudentProvider()),
+          ChangeNotifierProvider(
+              create: (context) => CourseProvider()),
+          ChangeNotifierProvider(
+              create: (context) => EnrollmentProvider()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
