@@ -1,3 +1,5 @@
+import 'package:authentication_app/screens/all_forms_screen.dart';
+import 'package:authentication_app/screens/dashboard_screen.dart';
 import 'package:authentication_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,38 +45,54 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: Consumer<DataProvider>(
-        builder: (context, dataProvider, child) {
-          if (dataProvider.dataList.isEmpty) {
-            return const Center(child: Text("No items available"));
-          }
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Consumer<DataProvider>(
+          //   builder: (context, dataProvider, child) {
+          //     if (dataProvider.dataList.isEmpty) {
+          //       return const Center(child: Text("No items available"));
+          //     }
+          //     return ListView.builder(
+          //       physics: NeverScrollableScrollPhysics(),
+          //       shrinkWrap: true,
+          //       itemCount: dataProvider.dataList.length,
+          //       itemBuilder: (context, index) {
+          //         final data = dataProvider.dataList[index];
+          //         return ListTile(
+          //           title: Text(data.title),
+          //           subtitle: Text("Category: ${data.category}"),
+          //           trailing: IconButton(
+          //               onPressed: () {
+          //                 _deleteItem(context, data.id);
+          //               },
+          //               icon: const Icon(Icons.delete)),
+          //           onTap: () {
+          //             dataProvider.setSelectedItem(data);
+          //             Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                   builder: (context) => const DetailScreen()),
+          //             );
+          //           },
+          //         );
+          //       },
+          //     );
+          //   },
+          // ),
 
-          return ListView.builder(
-            itemCount: dataProvider.dataList.length,
-            itemBuilder: (context, index) {
-              final data = dataProvider.dataList[index];
-              return ListTile(
-                title: Text(data.title),
-                subtitle: Text("Category: ${data.category}"),
-                trailing: IconButton(onPressed: (){
-                  _deleteItem(context, data.id);
-                }, icon: const Icon(Icons.delete)),
-                onTap: () {
-                  dataProvider.setSelectedItem(data);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const DetailScreen()),
-                  );
-                },
-              );
-            },
-          );
-        },
+          Center(
+            child: ElevatedButton(onPressed: (){
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) =>  const DashboardScreen()));
+            }, child: const Text("Go to course dashboard screen")),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (_) => const FormScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const AllFormsScreen()));
           },
           child: const Icon(Icons.add)),
     );

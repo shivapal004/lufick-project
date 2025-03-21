@@ -12,8 +12,8 @@ class UserProvider extends ChangeNotifier {
     _user = FirebaseAuth.instance.currentUser;
   }
 
-  Future<void> signIn() async {
-    _user = await _authService.signInWithGoogle();
+  Future<void> signIn(BuildContext context) async {
+    _user = await _authService.signInWithGoogle(context);
     notifyListeners();
   }
 

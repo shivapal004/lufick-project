@@ -30,7 +30,6 @@ class DataProvider with ChangeNotifier {
   Future<void> addData(DataModel data) async {
     if(_user == null) return;
     await db.collection('users').doc(_user.uid).collection('data').add(data.toMap());
-
     notifyListeners();
   }
 

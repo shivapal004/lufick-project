@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 223, 255, 187)),
             onPressed: () {
-              Provider.of<UserProvider>(context, listen: false).signIn();
+              Provider.of<UserProvider>(context, listen: false).signIn(context);
             },
             icon: Image.asset(
               'images/google.png',

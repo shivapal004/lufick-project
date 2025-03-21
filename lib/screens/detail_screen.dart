@@ -22,7 +22,7 @@ class DetailScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Consumer<DataProvider>(builder: (context, dataProvider, child){
+        child: Consumer<DataProvider>(builder: (context, dataProvider, child) {
           final selectedItem = dataProvider.selectedItem;
 
           if (selectedItem == null) {
@@ -53,7 +53,6 @@ class DetailScreen extends StatelessWidget {
               ],
             ),
           );
-
         }),
       ),
     );
@@ -100,8 +99,7 @@ class DetailScreen extends StatelessWidget {
                 dataProvider.updateData(selectedItem.id, {
                   'title': titleController.text,
                   'description': descriptionController.text,
-                  'category' : categoryController.text,
-
+                  'category': categoryController.text,
                 });
                 Navigator.pop(context);
               },
