@@ -1,0 +1,2 @@
+C:/Users/Shiva Pal/StudioProjects/lufick-project/android/app/.cxx/Debug/625q4l1o/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Shiva Pal/StudioProjects/lufick-project/android/app/.cxx/Debug/625q4l1o/armeabi-v7a/CMakeFiles/rebuild_cache.dir
