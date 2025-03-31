@@ -1,4 +1,4 @@
-import 'package:authentication_app/widgets/global_methods.dart';
+import 'package:authentication_app/services/global_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';

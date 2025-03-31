@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 
 import '../../../providers/course_provider.dart';
-import '../../../widgets/global_methods.dart';
+import '../../../services/global_methods.dart';
 
 class CourseForm extends StatefulWidget {
   const CourseForm({super.key});

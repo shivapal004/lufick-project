@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import '../models/course_model.dart';
-import '../widgets/global_methods.dart';
+import '../services/global_methods.dart';
 
 class CourseProvider with ChangeNotifier {
   List<CourseModel> _courses = [];

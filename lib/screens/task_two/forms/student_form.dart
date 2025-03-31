@@ -1,4 +1,4 @@
-import 'package:authentication_app/widgets/global_methods.dart';
+import 'package:authentication_app/services/global_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

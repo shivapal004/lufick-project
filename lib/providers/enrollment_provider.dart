@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/enrollment_model.dart';
-import '../widgets/global_methods.dart';
+import '../services/global_methods.dart';
 
 class EnrollmentProvider with ChangeNotifier {
   List<EnrollmentModel> _enrollments = [];
