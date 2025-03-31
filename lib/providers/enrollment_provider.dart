@@ -14,13 +14,6 @@ class EnrollmentProvider with ChangeNotifier {
 
   Future<void> getEnrollments() async {
     try {
-      // QuerySnapshot enrollmentSnapshot =
-      //     await db.collection('enrollments').get();
-      // _enrollments = enrollmentSnapshot.docs
-      //     .map((doc) => EnrollmentModel.fromMap(
-      //         doc.data() as Map<String, dynamic>, doc.id))
-      //     .toList();
-
       await FirebaseFirestore.instance
           .collection('enrollments')
           .get()
@@ -102,9 +95,4 @@ class EnrollmentProvider with ChangeNotifier {
 
     return coursesWithStudents;
   }
-
-// List<CourseModel> getPopularCourses() {
-//   return List.from(_courses)
-//     ..sort((a, b) => b.studentCount.compareTo(a.studentCount));
-// }
 }
