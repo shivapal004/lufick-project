@@ -28,7 +28,6 @@ class StudentProvider with ChangeNotifier {
                   email: element.get('email'),
                   phone: element.get('phone'),
                   gender: element.get('gender')
-                  // enrolledCourseIds: element.get('enrolledCourseIds')
               ));
         }
       });
@@ -64,18 +63,4 @@ class StudentProvider with ChangeNotifier {
       GlobalMethods.errorDialog(msg: error.toString(), context: context);
     }
   }
-
-// Future<void> updateStudent(String id, String name, String email, String phone) async {
-//   try {
-//     await db.collection('students').doc(id).update({
-//       'name': name,
-//       'email': email,
-//       'phone': phone,
-//     });
-//     await getStudents();
-//     notifyListeners();
-//   } catch (e) {
-//     print("Error updating student: $e");
-//   }
-// }
 }
