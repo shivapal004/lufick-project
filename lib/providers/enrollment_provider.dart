@@ -51,7 +51,7 @@ class EnrollmentProvider with ChangeNotifier {
         'enrollmentDate': enrollmentDate.toIso8601String(),
       });
       await Fluttertoast.showToast(
-        msg: "Course details added",
+        msg: "Student enrolled",
         toastLength: Toast.LENGTH_LONG,
       );
       await getEnrollments();

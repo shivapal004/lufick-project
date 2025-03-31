@@ -14,6 +14,9 @@ class CoursesDetailScreen extends StatefulWidget {
 class _CoursesDetailScreenState extends State<CoursesDetailScreen> {
   final TextEditingController courseSearchController = TextEditingController();
   String searchQuery = '';
+  Set<String> selectedFilters = {};
+
+  final List<String> filterOptions = ['Science', 'Math', 'Programming'];
 
   @override
   void initState() {
@@ -30,10 +33,35 @@ class _CoursesDetailScreenState extends State<CoursesDetailScreen> {
         title: const Text("Courses detail"),
       ),
       body: Consumer<CourseProvider>(builder: (context, courseProvider, child) {
-        final popularCourses = courseProvider.getPopularCourses();
 
-        final filteredCourses = courseProvider.courses.where((course) =>
-            course.title.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+        if (courseProvider.courses.isEmpty) {
+          return const Center(
+            child: Text("No course available"),
+          );
+        }
+
+        final filteredCourses = courseProvider.courses.where((course) {
+          final matchesCourse =
+              course.title.toLowerCase().contains(searchQuery.toLowerCase());
+
+          if (selectedFilters.isEmpty) return matchesCourse;
+
+          bool matchesFilter = selectedFilters.any((filter) {
+            if (filter == 'Science' && course.category.contains('Science')) {
+              return true;
+            }
+            if (filter == 'Math' && course.category.contains('Math')) {
+              return true;
+            }
+            if (filter == 'Programming' &&
+                course.category.contains('Programming')) {
+              return true;
+            }
+            return false;
+          });
+          return matchesCourse && matchesFilter;
+        }).toList();
+
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -46,6 +74,65 @@ class _CoursesDetailScreenState extends State<CoursesDetailScreen> {
                   });
                 },
                 hintText: 'Search by course',
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                height: 40,
+                child: ListView.builder(
+                    itemCount: filterOptions.length + 1,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: ChoiceChip(
+                            label: const Row(
+                              children: [
+                                Icon(
+                                  Icons.filter_list,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text("Filters")
+                              ],
+                            ),
+                            selected: false,
+                            backgroundColor: Colors.blueGrey,
+                            labelStyle: const TextStyle(color: Colors.white),
+                            onSelected: (_) {},
+                          ),
+                        );
+                      } else {
+                        final filter = filterOptions[index - 1];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: ChoiceChip(
+                            label: Text(filter),
+                            selected: selectedFilters.contains(filter),
+                            selectedColor: Colors.blueAccent,
+                            backgroundColor: Colors.grey[300],
+                            labelStyle: TextStyle(
+                                color: selectedFilters.contains(filter)
+                                    ? Colors.white
+                                    : Colors.black),
+                            onSelected: (selected) {
+                              setState(() {
+                                if (selected) {
+                                  selectedFilters.add(filter);
+                                } else {
+                                  selectedFilters.remove(filter);
+                                }
+                              });
+                            },
+                          ),
+                        );
+                      }
+                    }),
               ),
               const SizedBox(
                 height: 5,
@@ -64,25 +151,30 @@ class _CoursesDetailScreenState extends State<CoursesDetailScreen> {
                 endIndent: 80,
                 color: Colors.black,
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Expanded(
-                  child: ListView.builder(itemCount: filteredCourses.length,
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final course = filteredCourses[index];
-                        return Card(
-                          elevation: 1,
-                          color: Colors.orange.withOpacity(0.5),
-                          child: ListTile(
-                            title: Text(course.title),
-                            subtitle: Text(
-                                "Enrolled Students: ${course.studentCount}"),
-                          ),
-                        );
-                      }),
-                ),
+              const SizedBox(
+                height: 5,
+              ),
+              Expanded(
+                child: filteredCourses.isEmpty
+                    ? const Center(
+                        child: Text("No course found"),
+                      )
+                    : ListView.builder(
+                        itemCount: filteredCourses.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final course = filteredCourses[index];
+                          return Card(
+                            elevation: 2,
+                            color: Colors.orange.withOpacity(0.5),
+                            child: ListTile(
+                              title: Text(course.title),
+                              subtitle: Text(
+                                  "Enrolled Students: ${course.studentCount}"),
+                            ),
+                          );
+                        }),
               ),
             ],
           ),

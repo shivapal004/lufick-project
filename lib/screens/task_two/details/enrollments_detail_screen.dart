@@ -92,7 +92,7 @@ class _EnrollmentsDetailScreenState extends State<EnrollmentsDetailScreen> {
                             return Card(
                               elevation: 1,
                               color: Colors.orange.withOpacity(0.5),
-                              margin: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(5),
                               child: ExpansionTile(
                                 title: Text(course['title']),
                                 subtitle:
