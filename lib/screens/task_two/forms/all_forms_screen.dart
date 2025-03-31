@@ -1,7 +1,9 @@
-import 'package:authentication_app/screens/course_form.dart';
-import 'package:authentication_app/screens/enrollment_form.dart';
-import 'package:authentication_app/screens/student_form.dart';
+
+import 'package:authentication_app/screens/task_two/forms/student_form.dart';
 import 'package:flutter/material.dart';
+
+import 'course_form.dart';
+import 'enrollment_form.dart';
 
 class AllFormsScreen extends StatelessWidget {
   const AllFormsScreen({super.key});
@@ -13,29 +15,29 @@ class AllFormsScreen extends StatelessWidget {
       body: Column(
         children: [
           _listTiles(
-            title: 'Students',
-            subtitle: 'Fill student details',
-            icon: Icons.person,
-            function: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const StudentForm()));
-            }
-          ),
+              title: 'Students',
+              subtitle: 'Fill student details',
+              icon: Icons.person,
+              function: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const StudentForm()));
+              }),
           _listTiles(
               title: 'Courses',
               subtitle: 'Fill course details',
               icon: Icons.book,
-              function: (){
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const CourseForm()));
-              }
-          ),
+              function: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const CourseForm()));
+              }),
           _listTiles(
               title: 'Enrollments',
               subtitle: 'Fill enrollment details',
-              icon: Icons.book,
-              function: (){
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const EnrollmentForm()));
-              }
-          ),
+              icon: Icons.fact_check_rounded,
+              function: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const EnrollmentForm()));
+              }),
         ],
       ),
     );
