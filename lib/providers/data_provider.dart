@@ -14,22 +14,33 @@ class DataProvider with ChangeNotifier {
 
   DataModel? get selectedItem => _selectedItem;
 
-  void fetchData()  async{
-    if(_user == null) return;
-
-    db.collection('users').doc(_user.uid).collection('data').snapshots().listen((snapshot) {
+  Future<void> fetchData() async{
+    if (_user == null) return;
+    db
+        .collection('users')
+        .doc(_user.uid)
+        .collection('data')
+        .snapshots()
+        .listen((snapshot) {
       _dataList = snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data();
         data['id'] = doc.id;
         return DataModel.fromMap(data);
       }).toList();
+
       notifyListeners();
     });
   }
 
+
   Future<void> addData(DataModel data) async {
-    if(_user == null) return;
-    await db.collection('users').doc(_user.uid).collection('data').add(data.toMap());
+    if (_user == null) return;
+    await db
+        .collection('users')
+        .doc(_user.uid)
+        .collection('data')
+        .add(data.toMap());
+    fetchData();
     notifyListeners();
   }
 
@@ -39,8 +50,13 @@ class DataProvider with ChangeNotifier {
   }
 
   Future<void> updateData(String id, Map<String, dynamic> updatedData) async {
-    if(_user == null) return;
-    await db.collection('users').doc(_user.uid).collection('data').doc(id).update(updatedData);
+    if (_user == null) return;
+    await db
+        .collection('users')
+        .doc(_user.uid)
+        .collection('data')
+        .doc(id)
+        .update(updatedData);
 
     int index = _dataList.indexWhere((item) => item.id == id);
     if (index != -1) {
@@ -56,8 +72,13 @@ class DataProvider with ChangeNotifier {
   }
 
   Future<void> deleteData(String id) async {
-    if(_user == null) return;
-    await db.collection('users').doc(_user.uid).collection('data').doc(id).delete();
+    if (_user == null) return;
+    await db
+        .collection('users')
+        .doc(_user.uid)
+        .collection('data')
+        .doc(id)
+        .delete();
     dataList.removeWhere((item) => item.id == id);
     notifyListeners();
   }

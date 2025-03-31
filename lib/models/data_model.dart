@@ -27,7 +27,6 @@ class DataModel {
     );
   }
 
-
   Map<String, dynamic> toMap() {
     return {
       'id': id,

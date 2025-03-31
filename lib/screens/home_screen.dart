@@ -1,12 +1,14 @@
-import 'package:authentication_app/screens/all_forms_screen.dart';
-import 'package:authentication_app/screens/dashboard_screen.dart';
 import 'package:authentication_app/screens/profile_screen.dart';
+import 'package:authentication_app/screens/task_one/main_screen.dart';
+import 'package:authentication_app/screens/task_two/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/course_provider.dart';
 import '../providers/data_provider.dart';
+import '../providers/enrollment_provider.dart';
+import '../providers/student_provider.dart';
 import '../providers/user_provider.dart';
-import 'detail_screen.dart';
-import 'form_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,9 +19,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Provider.of<DataProvider>(context, listen: false).fetchData();
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(microseconds: 0), () async {
+      final studentProvider =
+          Provider.of<StudentProvider>(context, listen: false);
+      final courseProvider =
+          Provider.of<CourseProvider>(context, listen: false);
+      final enrollmentProvider =
+          Provider.of<EnrollmentProvider>(context, listen: false);
+      final dataProvider =
+      Provider.of<DataProvider>(context, listen: false);
+      await studentProvider.getStudents();
+      await courseProvider.getCourses();
+      await enrollmentProvider.getEnrollments();
+      await dataProvider.fetchData();
+    });
   }
 
   @override
@@ -48,59 +63,28 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Consumer<DataProvider>(
-          //   builder: (context, dataProvider, child) {
-          //     if (dataProvider.dataList.isEmpty) {
-          //       return const Center(child: Text("No items available"));
-          //     }
-          //     return ListView.builder(
-          //       physics: NeverScrollableScrollPhysics(),
-          //       shrinkWrap: true,
-          //       itemCount: dataProvider.dataList.length,
-          //       itemBuilder: (context, index) {
-          //         final data = dataProvider.dataList[index];
-          //         return ListTile(
-          //           title: Text(data.title),
-          //           subtitle: Text("Category: ${data.category}"),
-          //           trailing: IconButton(
-          //               onPressed: () {
-          //                 _deleteItem(context, data.id);
-          //               },
-          //               icon: const Icon(Icons.delete)),
-          //           onTap: () {
-          //             dataProvider.setSelectedItem(data);
-          //             Navigator.push(
-          //               context,
-          //               MaterialPageRoute(
-          //                   builder: (context) => const DetailScreen()),
-          //             );
-          //           },
-          //         );
-          //       },
-          //     );
-          //   },
-          // ),
-
           Center(
-            child: ElevatedButton(onPressed: (){
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) =>  const DashboardScreen()));
-            }, child: const Text("Go to course dashboard screen")),
-          )
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const MainScreen()));
+                },
+                child: const Text("Go to task 1 main screen")),
+          ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const DashboardScreen()));
+              },
+              child: const Text("Go to task 2 dashboard screen")),
+
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const AllFormsScreen()));
-          },
-          child: const Icon(Icons.add)),
-    );
-  }
 
-  void _deleteItem(BuildContext context, String id) {
-    final dataProvider = Provider.of<DataProvider>(context, listen: false);
-    dataProvider.deleteData(id);
-    // Navigator.pop(context);
+    );
   }
 }

@@ -1,11 +1,12 @@
+import 'package:authentication_app/firebase_options.dart';
 import 'package:authentication_app/providers/course_provider.dart';
 import 'package:authentication_app/providers/data_provider.dart';
 import 'package:authentication_app/providers/enrollment_provider.dart';
 import 'package:authentication_app/providers/student_provider.dart';
 import 'package:authentication_app/providers/user_provider.dart';
-import 'package:authentication_app/screens/form_screen.dart';
+import 'package:authentication_app/screens/task_two/details/students/student_details.dart';
 import 'package:authentication_app/screens/home_screen.dart';
-import 'package:authentication_app/screens/login_screen.dart';
+import 'package:authentication_app/screens/auth/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,9 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
   runApp(const MyApp());
 }
 
@@ -58,6 +61,10 @@ class MyApp extends StatelessWidget {
                   : const LoginScreen();
             },
           ),
+          routes: {
+            StudentDetails.routeName: (ctx) =>const StudentDetails(),
+
+          },
         ),
       );
 

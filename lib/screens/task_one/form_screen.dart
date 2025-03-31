@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/data_model.dart';
+import '../../models/data_model.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
