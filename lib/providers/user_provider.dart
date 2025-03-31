@@ -25,6 +25,6 @@ class UserProvider extends ChangeNotifier {
 
   void setUser(User? updatedUser) {
     _user = updatedUser;
-    notifyListeners(); // Notify UI to update profile picture
+    notifyListeners(); 
   }
 }
