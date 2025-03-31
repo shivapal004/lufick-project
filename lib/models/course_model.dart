@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class CourseModel {
   String id;
   String title;
@@ -16,7 +14,7 @@ class CourseModel {
     required this.instructor,
     required this.startDate,
     required this.endDate,
-    required this.studentCount,
+    this.studentCount = 0,
   });
 
   factory CourseModel.fromMap(Map<String, dynamic> map, String id) {
@@ -25,8 +23,8 @@ class CourseModel {
       title: map['title'] ?? '',
       category: map['category'] ?? '',
       instructor: map['instructor'] ?? '',
-      startDate: (map['startDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      endDate: (map['endDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      startDate: DateTime.parse(map['startDate']),
+      endDate: DateTime.parse(map['endDate']),
       studentCount: (map['studentCount'] as int?) ?? 0,
     );
   }
@@ -36,8 +34,8 @@ class CourseModel {
       'title': title,
       'category': category,
       'instructor': instructor,
-      'startDate': Timestamp.fromDate(startDate),
-      'endDate': Timestamp.fromDate(endDate),
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
       'studentCount': studentCount,
     };
   }
