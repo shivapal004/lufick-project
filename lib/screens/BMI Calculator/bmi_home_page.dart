@@ -1,3 +1,4 @@
+import 'package:authentication_app/screens/BMI%20Calculator/bmi_score_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ruler_scale_picker/ruler_scale_picker.dart';
 
@@ -9,26 +10,45 @@ class BmiHomePage extends StatefulWidget {
 }
 
 class _BmiHomePageState extends State<BmiHomePage> {
-  double bmi = 0;
+  double bmiScore = 0;
   String bmiCategory = "";
-  final TextEditingController heightTextController = TextEditingController(text: "160");
-  final TextEditingController weightTextController = TextEditingController();
+  final TextEditingController heightTextController =
+      TextEditingController(text: "160");
+  final TextEditingController weightTextController =
+      TextEditingController(text: "60");
   String selectedHeightUnit = "cm";
   String selectedWeightUnit = "kg";
 
-  late NumericRulerScalePickerController rulerController;
+  late NumericRulerScalePickerController heightRulerController;
+  late NumericRulerScalePickerController weightRulerController;
 
   @override
   void initState() {
     super.initState();
-    rulerController = NumericRulerScalePickerController(
+    heightRulerController = NumericRulerScalePickerController(
       firstValue: 0,
       lastValue: 200,
       initialValue: 160,
     );
 
-    rulerController.addListener(() {
-      heightTextController.text = rulerController.value.toString();
+    weightRulerController = NumericRulerScalePickerController(
+        firstValue: 0, lastValue: 150, initialValue: 60);
+
+    heightRulerController.addListener(() {
+      if (selectedHeightUnit == "cm") {
+        heightTextController.text = heightRulerController.value.toString();
+      } else {
+        heightTextController.text =
+            (heightRulerController.value / 30.48).toStringAsFixed(4);
+      }
+    });
+    weightRulerController.addListener(() {
+      if (selectedWeightUnit == "kg") {
+        weightTextController.text = weightRulerController.value.toString();
+      } else {
+        weightTextController.text =
+            (weightRulerController.value * 2.205).toStringAsFixed(4);
+      }
     });
   }
 
@@ -36,44 +56,33 @@ class _BmiHomePageState extends State<BmiHomePage> {
   void dispose() {
     heightTextController.dispose();
     weightTextController.dispose();
+    heightRulerController.dispose();
+    weightRulerController.dispose();
     super.dispose();
   }
 
   void calculateBMI() {
-    double? height = double.parse(heightTextController.text);
-    double? weight = double.parse(weightTextController.text);
+    double? height = double.tryParse(heightTextController.text);
+    double? weight = double.tryParse(weightTextController.text);
 
-    if (height <= 0 || weight <= 0) {
+    if (height! <= 0 || weight! <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Please enter valid height and weight")));
       return;
     }
 
-    if (selectedHeightUnit == "ft/inch") {
-      height = height * 0.3048;
+    if (selectedHeightUnit == "ft") {
+      height = height / 3.281;
     } else {
       height = height / 100;
     }
 
     if (selectedWeightUnit == "lb") {
-      weight = weight * 0.453592;
+      weight = weight / 2.205;
     }
     setState(() {
-      bmi = (weight! / (height! * height));
-      bmiCategory = getBMICategory(bmi);
+      bmiScore = (weight! / (height! * height));
     });
-  }
-
-  String getBMICategory(double bmi) {
-    if (bmi < 18.5) {
-      return "Underweight";
-    } else if (bmi >= 18.5 && bmi < 24.9) {
-      return "Normal weight";
-    } else if (bmi >= 25 && bmi < 29.9) {
-      return "Overweight";
-    } else {
-      return "Obese";
-    }
   }
 
   @override
@@ -88,10 +97,15 @@ class _BmiHomePageState extends State<BmiHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 30,),
+              const SizedBox(
+                height: 10,
+              ),
               const Text(
                 "Enter your details",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, ),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const Divider(
                 height: 2,
@@ -124,11 +138,11 @@ class _BmiHomePageState extends State<BmiHomePage> {
                     ),
                   ),
                   const SizedBox(
-                    width: 10,
+                    width: 39,
                   ),
                   DropdownButton(
                       value: selectedHeightUnit,
-                      items: ["cm", "ft/inch"].map((String unit) {
+                      items: ["cm", "ft"].map((String unit) {
                         return DropdownMenuItem(
                           value: unit,
                           child: Text(unit),
@@ -137,6 +151,14 @@ class _BmiHomePageState extends State<BmiHomePage> {
                       onChanged: (value) {
                         setState(() {
                           selectedHeightUnit = value!;
+                          if (selectedHeightUnit == "cm") {
+                            heightTextController.text =
+                                heightRulerController.value.toString();
+                          } else {
+                            heightTextController.text =
+                                (double.parse(heightTextController.text) / 30.48)
+                                    .toStringAsFixed(4);
+                          }
                         });
                       })
                 ],
@@ -144,20 +166,41 @@ class _BmiHomePageState extends State<BmiHomePage> {
               const SizedBox(
                 height: 20,
               ),
-
-              Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blueAccent, width: 2),
-                  borderRadius: BorderRadius.circular(16)
-                ),
-                child: NumericRulerScalePicker(
-                  controller: rulerController
-                ),
+              Stack(
+                children: [
+                  Container(
+                      height: 150,
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.blueAccent, width: 2),
+                          borderRadius: BorderRadius.circular(16)),
+                      child: NumericRulerScalePicker(
+                        controller: heightRulerController,
+                      )),
+                  Positioned(
+                    left: 1,
+                    top: 1,
+                    child: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16))),
+                        child: const Padding(
+                          padding: EdgeInsets.all(6.0),
+                          child: Text(
+                            "in cm",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                          ),
+                        )),
+                  )
+                ],
               ),
-
               const SizedBox(
-                height: 20,
+                height: 40,
               ),
               Row(
                 children: [
@@ -166,7 +209,7 @@ class _BmiHomePageState extends State<BmiHomePage> {
                     child: TextFormField(
                       controller: weightTextController,
                       decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.height),
+                          prefixIcon: const Icon(Icons.fitness_center),
                           labelText: "Enter your weight",
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -190,8 +233,51 @@ class _BmiHomePageState extends State<BmiHomePage> {
                       onChanged: (value) {
                         setState(() {
                           selectedWeightUnit = value!;
+                          if (selectedWeightUnit == "kg") {
+                            weightTextController.text =
+                                weightRulerController.value.toString();
+                          } else {
+                            weightTextController.text =
+                                (double.parse(weightTextController.text) * 2.205)
+                                    .toStringAsFixed(4);
+                          }
                         });
                       })
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Stack(
+                children: [
+                  Container(
+                    height: 150,
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent, width: 2),
+                        borderRadius: BorderRadius.circular(16)),
+                    child: NumericRulerScalePicker(
+                        controller: weightRulerController),
+                  ),
+                  Positioned(
+                    left: 1,
+                    top: 1,
+                    child: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16))),
+                        child: const Padding(
+                          padding: EdgeInsets.all(6.0),
+                          child: Text(
+                            "in kg",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                          ),
+                        )),
+                  )
                 ],
               ),
               const SizedBox(
@@ -204,36 +290,11 @@ class _BmiHomePageState extends State<BmiHomePage> {
                   onPressed: () {
                     FocusScope.of(context).unfocus();
                     calculateBMI();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BmiScorePage(
+                            bmiScore: bmiScore, bmiCategory: bmiCategory)));
                   },
                   child: const Text("Calculate BMI")),
-              const SizedBox(
-                height: 20,
-              ),
-              bmi > 0
-                  ? Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              "Your BMI is: ${bmi.toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Category: $bmiCategory",
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.blueAccent),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-        
             ],
           ),
         ),
