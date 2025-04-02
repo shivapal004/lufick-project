@@ -47,6 +47,8 @@ dependencies:
   uuid: ^4.5.1
   date_time_picker: ^2.1.0
   ruler_scale_picker: ^0.1.0
+  syncfusion_flutter_gauges: ^21.2.4
+  share_plus: ^10.1.4
 
 
 
