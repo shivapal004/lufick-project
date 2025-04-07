@@ -1,4 +1,5 @@
 import 'package:authentication_app/screens/BMI%20Calculator/bmi_home_page.dart';
+import 'package:authentication_app/screens/audio_player/audio_player.dart';
 import 'package:authentication_app/screens/profile_screen.dart';
 import 'package:authentication_app/screens/task_one/main_screen.dart';
 import 'package:authentication_app/screens/task_two/dashboard_screen.dart';
@@ -127,6 +128,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   child: const Text(
                     "BMI Calculator",
+                    style: TextStyle(fontSize: 16),
+                  )),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const AudioPlayer()));
+                  },
+                  child: const Text(
+                    "Audio player",
                     style: TextStyle(fontSize: 16),
                   )),
             ),
